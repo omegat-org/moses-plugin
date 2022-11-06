@@ -52,6 +52,7 @@ import org.omegat.gui.exttrans.MTConfigDialog;
 import org.omegat.tokenizer.ITokenizer;
 import org.omegat.util.DeNormalize;
 import org.omegat.util.Language;
+import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 
 /**
@@ -67,11 +68,23 @@ public class MosesTranslate extends BaseTranslate {
 
     private static final ResourceBundle bundle = ResourceBundle.getBundle("MosesBundle");
 
+    private static final String[] targetVersions = {"5.8.", "6.0.", "6.1."};
+
     /**
      * Plugin loader.
      */
     public static void loadPlugins() {
-        Core.registerMachineTranslationClass(MosesTranslate.class);
+        // detect OmegaT version. Moses MT connector is dropped from 5.8.0
+        String version = OStrings.getVersion();
+        if (version == null) {
+            return;
+        }
+        for (String target: targetVersions) {
+            if (version.startsWith(target)) {
+                Core.registerMachineTranslationClass(MosesTranslate.class);
+                break;
+            }
+        }
     }
 
     /**
