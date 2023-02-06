@@ -30,7 +30,12 @@ import java.awt.Window;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.OptionalLong;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,7 +47,12 @@ import javax.cache.Caching;
 import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
 import javax.cache.spi.CachingProvider;
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 
 import com.github.benmanes.caffeine.jcache.configuration.CaffeineConfiguration;
 import org.apache.xmlrpc.client.XmlRpcClient;
@@ -55,7 +65,11 @@ import org.omegat.filters2.html2.HTMLUtils;
 import org.omegat.gui.exttrans.IMachineTranslation;
 import org.omegat.gui.exttrans.MTConfigDialog;
 import org.omegat.tokenizer.ITokenizer;
-import org.omegat.util.*;
+import org.omegat.util.DeNormalize;
+import org.omegat.util.Language;
+import org.omegat.util.OStrings;
+import org.omegat.util.PatternConsts;
+import org.omegat.util.Preferences;
 
 /**
  * Support for Moses Server
@@ -80,6 +94,7 @@ public class MosesTranslate implements IMachineTranslation {
     /**
      * Plugin loader.
      */
+    @SuppressWarnings("unused")
     public static void loadPlugins() {
         // detect OmegaT version. Moses MT connector is dropped from 5.8.0
         String requiredVersion = "5.8.0";
@@ -108,6 +123,7 @@ public class MosesTranslate implements IMachineTranslation {
     /**
      * Plugin unloader.
      */
+    @SuppressWarnings("unused")
     public static void unloadPlugins() {
     }
 
@@ -160,10 +176,6 @@ public class MosesTranslate implements IMachineTranslation {
                 cache.clear();
             }
         });
-    }
-
-    protected String getPreferenceName() {
-        return ALLOW_MOSES_TRANSLATE;
     }
 
     public String getName() {
@@ -288,7 +300,7 @@ public class MosesTranslate implements IMachineTranslation {
 
                 @Override
                 protected void done() {
-                    String message = null;
+                    String message;
                     try {
                         message = get();
                     } catch (ExecutionException e) {

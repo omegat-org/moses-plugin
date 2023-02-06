@@ -3,9 +3,6 @@ package org.omegat.connectors.machinetranslators;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import com.github.tomakehurst.wiremock.matching.StringValuePattern;
-import com.github.tomakehurst.wiremock.recording.SnapshotRecordResult;
-import com.github.tomakehurst.wiremock.stubbing.StubMapping;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,15 +11,15 @@ import org.omegat.core.Core;
 import org.omegat.core.data.NotLoadedProject;
 import org.omegat.tokenizer.DefaultTokenizer;
 import org.omegat.tokenizer.ITokenizer;
-import org.omegat.util.*;
+import org.omegat.util.Language;
+import org.omegat.util.Preferences;
+import org.omegat.util.PreferencesImpl;
+import org.omegat.util.PreferencesXML;
+import org.omegat.util.RuntimePreferences;
 import wiremock.org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
