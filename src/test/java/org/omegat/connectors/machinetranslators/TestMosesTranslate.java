@@ -73,7 +73,7 @@ public class TestMosesTranslate {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "text/xml")
-                        .withBody("<methodResponse><params><param><value><struct>" +
+                        .withBody("<?xml version=\"1.0\" encoding=\"UTF-8\"?><methodResponse><params><param><value><struct>" +
                                 "<member><name>text</name><value><string>" + translation + "</string></value></member>" +
                                 "</struct></value></param></params></methodResponse>")));
 
