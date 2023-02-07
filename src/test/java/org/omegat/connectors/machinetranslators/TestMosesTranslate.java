@@ -60,7 +60,7 @@ public class TestMosesTranslate {
                         equalToXml("<methodName>translate</methodName>")))
                 .withRequestBody(matchingXPath("//methodCall/params/param/value/struct/member/name",
                         equalToXml("<name>text</name>")))
-                        /*
+                        /* <?xml version=\"1.0\" encoding=\"UTF-8\"?>
                               <methodCall><methodName>translate</methodName>
                                 <params><param><value><struct>
                                    <member>
