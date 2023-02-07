@@ -15,8 +15,14 @@ omegat {
     pluginClass = "org.omegat.connectors.machinetranslators.MosesTranslate"
 }
 
+repositories {
+    mavenCentral()
+    maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots/" }
+}
+
 dependencies {
-    packIntoJar 'org.apache.xmlrpc:xmlrpc-client:3.1.3'
+    packIntoJar 'org.omegat:apache-xmlrpc-client:3.1.3-20230208-SNAPSHOT'
+    packIntoJar 'org.omegat:apache-xmlrpc-common:3.1.3-20230208-SNAPSHOT'
     implementation "com.github.ben-manes.caffeine:caffeine:2.9.3"
     implementation "com.github.ben-manes.caffeine:jcache:2.9.3"
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
