@@ -34,33 +34,21 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.OptionalLong;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 
-import javax.cache.Cache;
-import javax.cache.CacheManager;
-import javax.cache.Caching;
-import javax.cache.expiry.CreatedExpiryPolicy;
-import javax.cache.expiry.Duration;
-import javax.cache.spi.CachingProvider;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
 
-import com.github.benmanes.caffeine.jcache.configuration.CaffeineConfiguration;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 import org.omegat.core.Core;
-import org.omegat.core.CoreEvents;
-import org.omegat.core.events.IProjectEventListener;
 import org.omegat.filters2.html2.HTMLUtils;
 import org.omegat.gui.exttrans.IMachineTranslation;
 import org.omegat.gui.exttrans.MTConfigDialog;
@@ -68,7 +56,6 @@ import org.omegat.tokenizer.ITokenizer;
 import org.omegat.util.DeNormalize;
 import org.omegat.util.Language;
 import org.omegat.util.OStrings;
-import org.omegat.util.PatternConsts;
 import org.omegat.util.Preferences;
 
 /**
@@ -76,20 +63,13 @@ import org.omegat.util.Preferences;
  *
  * @author Aaron Madlon-Kay
  */
-public class MosesTranslate implements IMachineTranslation {
+public class MosesTranslate extends BaseTranslate implements IMachineTranslation {
 
     protected static final String ALLOW_MOSES_TRANSLATE = "allow_moses_translate";
 
     protected static final String PROPERTY_MOSES_URL = "moses.server.url";
 
     private static final ResourceBundle bundle = ResourceBundle.getBundle("MosesBundle");
-
-    /**
-     * Machine translation implementation can use this cache for skip requests
-     * twice. Cache will be cleared when project change.
-     */
-    private final Cache<String, String> cache;
-    private boolean enabled;
 
     /**
      * Plugin loader.
@@ -101,18 +81,16 @@ public class MosesTranslate implements IMachineTranslation {
         String requiredUpdate = "0";
         try {
             Class<?> clazz = Class.forName("org.omegat.util.VersionChecker");
-            Method compareVersions =
-                    clazz.getMethod("compareVersions", String.class, String.class, String.class, String.class);
-            if ((int) compareVersions.invoke(clazz, OStrings.VERSION, OStrings.UPDATE, requiredVersion, requiredUpdate)
-                    < 0) {
+            Method compareVersions = clazz.getMethod("compareVersions", String.class, String.class,
+                    String.class, String.class);
+            if ((int) compareVersions.invoke(clazz, OStrings.VERSION, OStrings.UPDATE, requiredVersion,
+                    requiredUpdate) < 0) {
                 Core.pluginLoadingError("Moses Plugin cannot be loaded because OmegaT Version "
                         + OStrings.VERSION + " is lower than required version " + requiredVersion);
                 return;
             }
-        } catch (ClassNotFoundException
-                 | NoSuchMethodException
-                 | IllegalAccessException
-                 | InvocationTargetException e) {
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
+                | InvocationTargetException e) {
             Core.pluginLoadingError(
                     "Moses Plugin cannot be loaded because this OmegaT version is not supported");
             return;
@@ -128,54 +106,7 @@ public class MosesTranslate implements IMachineTranslation {
     }
 
     public MosesTranslate() {
-        if (Core.getMainWindow() != null) {
-            JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem();
-            menuItem.setText(getName());
-            menuItem.addActionListener(e -> setEnabled(menuItem.isSelected()));
-            enabled = Preferences.isPreference(ALLOW_MOSES_TRANSLATE);
-            menuItem.setState(enabled);
-            Core.getMainWindow().getMainMenu().getMachineTranslationMenu().add(menuItem);
-            // Preferences listener
-            Preferences.addPropertyChangeListener(ALLOW_MOSES_TRANSLATE, e -> {
-                boolean newValue = (Boolean) e.getNewValue();
-                menuItem.setSelected(newValue);
-                enabled = newValue;
-            });
-        }
-
-        cache = getCacheLayer(getName());
-        setCacheClearPolicy();
-    }
-
-    /**
-     * Creat cache object.
-     * <p>
-     * MT connectors can override cache size and invalidate policy.
-     * @param name name of cache which should be unique among MT connectors.
-     * @return Cache object
-     */
-    protected Cache<String, String> getCacheLayer(String name) {
-        CachingProvider provider = Caching.getCachingProvider();
-        CacheManager manager = provider.getCacheManager();
-        Cache<String, String> cache1 = manager.getCache(name);
-        if (cache1 != null) {
-            return cache1;
-        }
-        CaffeineConfiguration<String, String> config = new CaffeineConfiguration<>();
-        config.setExpiryPolicyFactory(() -> new CreatedExpiryPolicy(Duration.ONE_DAY));
-        config.setMaximumSize(OptionalLong.of(1_000));
-        return manager.createCache(name, config);
-    }
-
-    /**
-     * Register cache clear policy.
-     */
-    protected void setCacheClearPolicy() {
-        CoreEvents.registerProjectChangeListener(eventType -> {
-            if (eventType.equals(IProjectEventListener.PROJECT_CHANGE_TYPE.CLOSE)) {
-                cache.clear();
-            }
-        });
+        super();
     }
 
     public String getName() {
@@ -183,35 +114,8 @@ public class MosesTranslate implements IMachineTranslation {
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void setEnabled(boolean b) {
-        enabled = b;
-    }
-
-    @Override
-    public String getTranslation(Language sLang, Language tLang, String text) throws Exception {
-        if (enabled) {
-            return translate(sLang, tLang, text);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public String getCachedTranslation(Language sLang, Language tLang, String text) {
-        if (enabled) {
-            return getFromCache(sLang, tLang, text);
-        } else {
-            return null;
-        }
-    }
-
-    protected String getFromCache(Language sLang, Language tLang, String text) {
-        return cache.get(sLang + "/" + tLang + "/" + text);
+    protected String getPreferenceName() {
+        return ALLOW_MOSES_TRANSLATE;
     }
 
     protected String translate(Language sLang, Language tLang, String text) throws Exception {
@@ -332,44 +236,5 @@ public class MosesTranslate implements IMachineTranslation {
         dialog.panel.temporaryCheckBox.setVisible(false);
 
         dialog.show();
-    }
-
-    /**
-     * Attempt to clean spaces added around tags by machine translators. Do it
-     * by comparing spaces between the source text and the machine translated
-     * text.
-     *
-     * @param machineText
-     *            The text returned by the machine translator
-     * @param sourceText
-     *            The original source segment
-     * @return replaced text
-     */
-    protected String cleanSpacesAroundTags(String machineText, String sourceText) {
-
-        // Spaces after
-        Matcher tag = PatternConsts.OMEGAT_TAG_SPACE.matcher(machineText);
-        while (tag.find()) {
-            String searchTag = tag.group();
-            if (!sourceText.contains(searchTag)) { // The tag didn't appear
-                // with a trailing space
-                // in the source text
-                String replacement = searchTag.substring(0, searchTag.length() - 1);
-                machineText = machineText.replace(searchTag, replacement);
-            }
-        }
-
-        // Spaces before
-        tag = PatternConsts.SPACE_OMEGAT_TAG.matcher(machineText);
-        while (tag.find()) {
-            String searchTag = tag.group();
-            if (!sourceText.contains(searchTag)) { // The tag didn't appear
-                // with a leading space
-                // in the source text
-                String replacement = searchTag.substring(1);
-                machineText = machineText.replace(searchTag, replacement);
-            }
-        }
-        return machineText;
     }
 }
