@@ -8,7 +8,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.omegat.connectors.machinetranslators.moses.MosesTranslate;
 import org.omegat.core.Core;
 import org.omegat.core.data.NotLoadedProject;
 import org.omegat.tokenizer.DefaultTokenizer;
@@ -54,29 +53,25 @@ public class TestMosesTranslate {
 
         WireMock wireMock = wireMockRuntimeInfo.getWireMock();
         int port = wireMockRuntimeInfo.getHttpPort();
-        System.setProperty(MosesTranslate.PROPERTY_MOSES_URL, String.format("http://localhost:%d%s", port, RPC_PATH));
-        wireMock.register(post(urlPathEqualTo(RPC_PATH))
-                .withHeader("Content-Type", equalTo("text/xml"))
+        System.setProperty(MosesTranslate.PROPERTY_MOSES_URL,
+                String.format("http://localhost:%d%s", port, RPC_PATH));
+        wireMock.register(post(urlPathEqualTo(RPC_PATH)).withHeader("Content-Type", equalTo("text/xml"))
                 .withRequestBody(matchingXPath("//methodCall/methodName",
                         equalToXml("<methodName>translate</methodName>")))
                 .withRequestBody(matchingXPath("//methodCall/params/param/value/struct/member/name",
                         equalToXml("<name>text</name>")))
-                        /* <?xml version=\"1.0\" encoding=\"UTF-8\"?>
-                              <methodCall><methodName>translate</methodName>
-                                <params><param><value><struct>
-                                   <member>
-                                     <name>text</name>
-                                     <value><string>source text</string></value>
-                                   </member>
-                                </struct></value></param></params>
-                               </methodCall>
-                         */
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "text/xml")
-                        .withBody("<?xml version=\"1.0\" encoding=\"UTF-8\"?><methodResponse><params><param><value><struct>" +
-                                "<member><name>text</name><value><string>" + translation + "</string></value></member>" +
-                                "</struct></value></param></params></methodResponse>")));
+                /*
+                 * <?xml version=\"1.0\" encoding=\"UTF-8\"?>
+                 * <methodCall><methodName>translate</methodName>
+                 * <params><param><value><struct> <member> <name>text</name>
+                 * <value><string>source text</string></value> </member>
+                 * </struct></value></param></params> </methodCall>
+                 */
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/xml").withBody(
+                        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><methodResponse><params><param><value><struct>"
+                                + "<member><name>text</name><value><string>" + translation
+                                + "</string></value></member>"
+                                + "</struct></value></param></params></methodResponse>")));
 
         MosesTranslate mosesTranslate = new MosesTranslate();
         String response = mosesTranslate.translate(new Language("EN"), new Language("DE"), text);
