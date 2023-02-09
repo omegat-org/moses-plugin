@@ -24,7 +24,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **************************************************************************/
 
-package org.omegat.connectors.machinetranslators;
+package org.omegat.connectors.machinetranslators.moses;
 
 import java.awt.Window;
 import java.lang.reflect.InvocationTargetException;

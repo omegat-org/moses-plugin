@@ -1,4 +1,4 @@
-package org.omegat.connectors.machinetranslators;
+package org.omegat.connectors.machinetranslators.moses;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
@@ -8,6 +8,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.omegat.connectors.machinetranslators.moses.MosesTranslate;
 import org.omegat.core.Core;
 import org.omegat.core.data.NotLoadedProject;
 import org.omegat.tokenizer.DefaultTokenizer;
