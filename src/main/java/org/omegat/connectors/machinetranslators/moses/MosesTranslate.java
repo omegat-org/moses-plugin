@@ -145,7 +145,9 @@ public final class MosesTranslate extends BaseTranslate implements IMachineTrans
 
         Object[] xmlRpcParams = {mosesParams};
         HashMap<?, ?> response = (HashMap<?, ?>) client.execute("translate", xmlRpcParams);
-        return mosesPostprocess((String) response.get("text"), tLang);
+        String result = mosesPostprocess((String) response.get("text"), tLang);
+        putToCache(sLang, tLang, text, result);
+        return result;
     }
 
     private XmlRpcClient getClient(URL url) {
