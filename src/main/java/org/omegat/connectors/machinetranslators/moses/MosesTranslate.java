@@ -59,17 +59,17 @@ import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 
 /**
- * Support for Moses Server
+ * Support for Moses Server.
  *
  * @author Aaron Madlon-Kay
  */
-public class MosesTranslate extends BaseTranslate implements IMachineTranslation {
+public final class MosesTranslate extends BaseTranslate implements IMachineTranslation {
 
-    protected static final String ALLOW_MOSES_TRANSLATE = "allow_moses_translate";
+    static final String ALLOW_MOSES_TRANSLATE = "allow_moses_translate";
 
-    protected static final String PROPERTY_MOSES_URL = "moses.server.url";
+    static final String PROPERTY_MOSES_URL = "moses.server.url";
 
-    private static final ResourceBundle bundle = ResourceBundle.getBundle("MosesBundle");
+    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("MosesBundle");
 
     /**
      * Plugin loader.
@@ -99,29 +99,43 @@ public class MosesTranslate extends BaseTranslate implements IMachineTranslation
     }
 
     /**
-     * Plugin unloader.
+     * Plugin un-loader.
      */
     @SuppressWarnings("unused")
     public static void unloadPlugins() {
     }
 
+    /**
+     * Constructor.
+     */
     public MosesTranslate() {
         super();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getName() {
-        return bundle.getString("MT_ENGINE_MOSES");
+        return BUNDLE.getString("MT_ENGINE_MOSES");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected String getPreferenceName() {
         return ALLOW_MOSES_TRANSLATE;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected String translate(Language sLang, Language tLang, String text) throws Exception {
         String server = getServerUrl();
         if (server == null) {
-            throw new Exception(bundle.getString("MT_ENGINE_MOSES_URL_NOTFOUND"));
+            throw new Exception(BUNDLE.getString("MT_ENGINE_MOSES_URL_NOTFOUND"));
         }
 
         XmlRpcClient client = getClient(new URL(server));
@@ -129,7 +143,7 @@ public class MosesTranslate extends BaseTranslate implements IMachineTranslation
         Map<String, String> mosesParams = new HashMap<>();
         mosesParams.put("text", mosesPreprocess(text, sLang.getLocale()));
 
-        Object[] xmlRpcParams = { mosesParams };
+        Object[] xmlRpcParams = {mosesParams};
         HashMap<?, ?> response = (HashMap<?, ?>) client.execute("translate", xmlRpcParams);
         return mosesPostprocess((String) response.get("text"), tLang);
     }
@@ -186,9 +200,9 @@ public class MosesTranslate extends BaseTranslate implements IMachineTranslation
         };
 
         JLabel messageLabel = new JLabel();
-        JButton testButton = new JButton(bundle.getString("MT_ENGINE_MOSES_TEST_BUTTON"));
+        JButton testButton = new JButton(BUNDLE.getString("MT_ENGINE_MOSES_TEST_BUTTON"));
         testButton.addActionListener(e -> {
-            messageLabel.setText(bundle.getString("MT_ENGINE_MOSES_TEST_TESTING"));
+            messageLabel.setText(BUNDLE.getString("MT_ENGINE_MOSES_TEST_TESTING"));
             String url = dialog.panel.valueField1.getText().trim();
             new SwingWorker<String, Void>() {
                 @Override
@@ -196,9 +210,9 @@ public class MosesTranslate extends BaseTranslate implements IMachineTranslation
                     XmlRpcClient client = getClient(new URL(url));
                     Object response = client.execute("system.listMethods", (Object[]) null);
                     if (Arrays.asList(((Object[]) response)).contains("translate")) {
-                        return bundle.getString("MT_ENGINE_MOSES_TEST_RESULT_OK");
+                        return BUNDLE.getString("MT_ENGINE_MOSES_TEST_RESULT_OK");
                     } else {
-                        return bundle.getString("MT_ENGINE_MOSES_TEST_RESULT_NO_TRANSLATE");
+                        return BUNDLE.getString("MT_ENGINE_MOSES_TEST_RESULT_NO_TRANSLATE");
                     }
                 }
 
@@ -226,7 +240,7 @@ public class MosesTranslate extends BaseTranslate implements IMachineTranslation
         testPanel.setAlignmentX(0);
         dialog.panel.itemsPanel.add(testPanel);
 
-        dialog.panel.valueLabel1.setText(bundle.getString("MT_ENGINE_MOSES_URL_LABEL"));
+        dialog.panel.valueLabel1.setText(BUNDLE.getString("MT_ENGINE_MOSES_URL_LABEL"));
         dialog.panel.valueField1.setText(getServerUrl());
         dialog.panel.valueField1.setColumns(20);
 

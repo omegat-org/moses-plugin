@@ -21,8 +21,17 @@ import org.omegat.util.RuntimePreferences;
 import java.io.File;
 import java.nio.file.Files;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToXml;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingXPath;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 
+/**
+ * Connection tests.
+ * @author Hiroshi Miura
+ */
 @WireMockTest
 public class TestMosesTranslate {
 
@@ -30,17 +39,30 @@ public class TestMosesTranslate {
 
     private File tmpDir;
 
+    /**
+     * Create user omegat preference folder.
+     * @throws Exception when I/O error.
+     */
     @BeforeEach
     public final void setUp() throws Exception {
         tmpDir = Files.createTempDirectory("omegat").toFile();
         Assertions.assertTrue(tmpDir.isDirectory());
     }
 
+    /**
+     * Clean-up user preference folder.
+     * @throws Exception when I/O error.
+     */
     @AfterEach
     public final void tearDown() throws Exception {
         FileUtils.deleteDirectory(tmpDir);
     }
 
+    /**
+     * Test request-response of XML-RPC API.
+     * @param wireMockRuntimeInfo wiremock object.
+     * @throws Exception when plugin raise error.
+     */
     @Test
     void testResponse(WireMockRuntimeInfo wireMockRuntimeInfo) throws Exception {
         File prefsFile = new File(tmpDir, Preferences.FILE_PREFERENCES);
@@ -78,7 +100,12 @@ public class TestMosesTranslate {
         Assertions.assertEquals(translation, response);
     }
 
-    public static synchronized void init(String configDir) {
+    /**
+     * Initialize OmegaT runtime configuration.
+     * @param configDir
+     *              configuration directory.
+     */
+    private static synchronized void init(String configDir) {
         RuntimePreferences.setConfigDir(configDir);
         Preferences.init();
         Preferences.initFilters();
@@ -86,6 +113,9 @@ public class TestMosesTranslate {
         Core.setProject(new TestProject());
     }
 
+    /**
+     * Pseudo project object for test.
+     */
     static class TestProject extends NotLoadedProject {
         @Override
         public ITokenizer getSourceTokenizer() {

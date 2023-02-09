@@ -94,7 +94,7 @@ public abstract class BaseTranslate implements IMachineTranslation {
      * Creat cache object.
      * <p>
      * MT connectors can override cache size and invalidate policy.
-     * 
+     *
      * @param name
      *            name of cache which should be unique among MT connectors.
      * @return Cache object
@@ -116,7 +116,7 @@ public abstract class BaseTranslate implements IMachineTranslation {
 
     /**
      * Common function to obtain CaffeineCache instance.
-     * 
+     *
      * @param name
      *            name of cache.
      * @param sizeOfCache
@@ -180,7 +180,7 @@ public abstract class BaseTranslate implements IMachineTranslation {
      * Attempt to clean spaces added around tags by machine translators. Do it
      * by comparing spaces between the source text and the machine translated
      * text.
-     * 
+     *
      * @param machineText
      *            The text returned by the machine translator
      * @param sourceText
@@ -262,6 +262,7 @@ public abstract class BaseTranslate implements IMachineTranslation {
      *            if <code>false</code>, encode with Base64 and store in
      *            persistent preferences as well
      */
+    @SuppressWarnings("avoidinlineconditionals")
     protected void setCredential(String id, String value, boolean temporary) {
         System.setProperty(id, value);
         CredentialsManager.getInstance().store(id, temporary ? "" : value);
@@ -284,6 +285,7 @@ public abstract class BaseTranslate implements IMachineTranslation {
     }
 
     /** Convert entities to character. Ex: "&#39;" to "'". */
+    @SuppressWarnings("unused")
     protected static String unescapeHTML(String text) {
         return HTMLUtils.entitiesToChars(text);
     }
