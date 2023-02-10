@@ -13,7 +13,7 @@ version = '5.8.0'
 
 omegat {
     version = "5.7.1"
-    pluginClass = "org.omegat.connectors.machinetranslators.MosesTranslate"
+    pluginClass = "org.omegat.connectors.machinetranslators.moses.MosesTranslate"
 }
 
 repositories {
