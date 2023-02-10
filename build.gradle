@@ -9,9 +9,10 @@ plugins {
     id('org.omegat.gradle') version '1.5.9'
 }
 
-version = '5.8.0'
+version = '1.0.0'
 
 omegat {
+    // minimum required version is 5.8.0
     version = "5.7.1"
     pluginClass = "org.omegat.connectors.machinetranslators.moses.MosesTranslate"
 }

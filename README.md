@@ -1,30 +1,14 @@
 # OmegaT Moses MT connector plugin
 
-This is spin-out Moses MT connector for OmegaT.
-Moses MT connector uses Apache XML-RPC client library that is known to have CRITICAL vulnerability and
-it is not fixed.
-
+This is spin-out Moses MT connector for OmegaT 5.8.0 or later.
+Moses MT connector uses Apache XML-RPC client library that is known to have CRITICAL vulnerability.
 It is why Moses MT connector is removed from OmegaT main distribution.
 
-The plugin here is a spin-out project that is as same as the connector in OmegaT 5.7.1.
+The plugin here uses the forked and patched version of xml-rpc client and experimental release.
 
-## CAUTION
+## Version and development status
 
-OmegaT Moses MT connector has VULNERABILITY ranked as CRITICAL.
-
-### What you should aware of?
-
-If moses MT service is compromised, OmegaT connector might execute arbitrary code from attacker on your PC.
-
-### Deserialization of Untrusted Data
-
-org.apache.xmlrpc:xmlrpc-client is a Java implementation of XML-RPC, a popular protocol that uses XML over HTTP
-to implement remote procedure calls.
-Affected versions of this package are vulnerable to Deserialization of Untrusted Data.
-A flaw was discovered where the XMLRPC client implementation performed deserialization of
-the server-side exception serialized in the faultCause attribute of XMLRPC error response messages.
-A malicious or compromised XMLRPC server could possibly use this flaw to execute arbitrary code with the privileges
-of an application using the Apache XMLRPC client library.
+Current published version is version 1.0.0.
 
 ## Installation
 
@@ -35,3 +19,17 @@ depending on your operating system.
 ## License
 
 This project is distributed under the GNU general public license version 3 or later.
+
+## CAUTION
+
+Moses MT connector in OmegaT 5.7.1 and before has VULNERABILITY ranked as CRITICAL.
+
+### Deserialization of Untrusted Data
+
+org.apache.xmlrpc:xmlrpc-client is a Java implementation of XML-RPC, a popular protocol that uses XML over HTTP
+to implement remote procedure calls.
+Affected versions of this package are vulnerable to Deserialization of Untrusted Data.
+A flaw was discovered where the XMLRPC client implementation performed deserialization of
+the server-side exception serialized in the faultCause attribute of XMLRPC error response messages.
+A malicious or compromised XMLRPC server could possibly use this flaw to execute arbitrary code with the privileges
+of an application using the Apache XMLRPC client library.
