@@ -1,11 +1,13 @@
+import org.gradle.crypto.checksum.Checksum
+
 plugins {
-    id('java')
-    id('jacoco')
-    id('checkstyle')
-    id('distribution')
-    id('maven')
-    id('groovy')
-    id 'com.diffplug.spotless' version '6.0.0'
+    id 'java'
+    id 'jacoco'
+    id 'checkstyle'
+    id 'distribution'
+    id 'signing'
+    id("org.gradle.crypto.checksum") version "1.4.0"
+    id('com.diffplug.spotless') version '6.0.0'
     id('org.omegat.gradle') version '1.5.9'
 }
 
@@ -55,4 +57,20 @@ spotless {
         eclipse().configFile 'config/spotless/eclipse-formatting.xml'
         removeUnusedImports()
     }
+}
+
+signing {
+    if (!findProperty("signing.keyId")) {
+        useGpgCmd()
+    }
+    sign tasks.distZip
+    sign tasks.jar
+}
+
+task checksum(type: Checksum) {
+    dependsOn tasks.distZip
+    inputFiles.setFrom([tasks.jar.archiveFile, tasks.distZip.archiveFile])
+    outputDirectory.set(layout.buildDirectory.dir("distributions"))
+    checksumAlgorithm.set(Checksum.Algorithm.SHA512)
+    appendFileNameToChecksum.set(true)
 }
