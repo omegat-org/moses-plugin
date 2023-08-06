@@ -1,14 +1,17 @@
 # OmegaT Moses MT connector plugin
 
 This is spin-out Moses MT connector for OmegaT 5.8.0 or later.
-Moses MT connector uses Apache XML-RPC client library that is known to have CRITICAL vulnerability.
+Moses MT connector used Apache XML-RPC client library that is known to have CRITICAL vulnerability(CVE-2019-17570).
 It is why Moses MT connector is removed from OmegaT main distribution.
 
-The plugin here uses the forked and patched version of xml-rpc client and experimental release.
+The plugin here uses the forked and patched version of xml-rpc client, that uses the patch
+from [Fedra Linux Bugzilla #1775193](https://bugzilla.redhat.com/show_bug.cgi?id=1775193)
+
+The plugin resolves the vulnerability issue and published as an experimental release.
 
 ## Version and development status
 
-Current published version is version 1.0.0.
+The Current version is 1.0.0.
 
 ## Installation
 
@@ -24,7 +27,7 @@ This project is distributed under the GNU general public license version 3 or la
 
 Moses MT connector in OmegaT 5.7.1 and before has VULNERABILITY ranked as CRITICAL.
 
-### Deserialization of Untrusted Data
+### Deserialization of Untrusted Data (CVE-2019-17570)
 
 org.apache.xmlrpc:xmlrpc-client is a Java implementation of XML-RPC, a popular protocol that uses XML over HTTP
 to implement remote procedure calls.
