@@ -14,9 +14,15 @@ plugins {
 version = '1.0.1-SNAPSHOT'
 
 omegat {
-    // minimum required version is 5.8.0
-    version = "5.7.1"
+    version = "5.8.0"
     pluginClass = "org.omegat.connectors.machinetranslators.moses.MosesTranslate"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+        vendor = JvmVendorSpec.ADOPTIUM
+    }
 }
 
 repositories {
@@ -67,7 +73,7 @@ signing {
     sign tasks.jar
 }
 
-task checksum(type: Checksum) {
+tasks.register('checksum', Checksum) {
     dependsOn tasks.distZip
     inputFiles.setFrom([tasks.jar.archiveFile, tasks.distZip.archiveFile])
     outputDirectory.set(layout.buildDirectory.dir("distributions"))
