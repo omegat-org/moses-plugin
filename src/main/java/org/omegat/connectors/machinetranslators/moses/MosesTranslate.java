@@ -49,11 +49,10 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 import org.omegat.core.Core;
-import org.omegat.filters2.html2.HTMLUtils;
+import org.omegat.util.HTMLUtils;
 import org.omegat.gui.exttrans.IMachineTranslation;
 import org.omegat.gui.exttrans.MTConfigDialog;
 import org.omegat.tokenizer.ITokenizer;
-import org.omegat.util.DeNormalize;
 import org.omegat.util.Language;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
