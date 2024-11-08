@@ -20,13 +20,13 @@ if (versionDetails().isCleanTag) {
 }
 
 omegat {
-    version = "5.8.0"
+    version = "6.0.0"
     pluginClass = "org.omegat.connectors.machinetranslators.moses.MosesTranslate"
 }
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
+        languageVersion = JavaLanguageVersion.of(11)
         vendor = JvmVendorSpec.ADOPTIUM
     }
 }
@@ -40,9 +40,9 @@ dependencies {
     packIntoJar 'org.omegat:xmlrpc-common:3.1.3-20230209'
     implementation "com.github.ben-manes.caffeine:caffeine:2.9.3"
     implementation "com.github.ben-manes.caffeine:jcache:2.9.3"
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
-    testImplementation 'com.github.tomakehurst:wiremock-jre8-standalone:2.35.0'
-    testImplementation 'commons-io:commons-io:2.8.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    testImplementation 'org.wiremock:wiremock:3.9.2'
+    testImplementation 'commons-io:commons-io:2.14.0'
 }
 
 checkstyle {

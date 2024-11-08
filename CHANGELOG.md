@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+* Now requires Java 11
+* Build against OmegaT 6.0.0
+* Bump test dependencies
+* Bump gradl@8.9
+* Import DeNormalizer.java in the source; for preparation of removal from OmegaT core.
+
 ## [v1.0.1]
 
 * chore: Versioning with git tag
