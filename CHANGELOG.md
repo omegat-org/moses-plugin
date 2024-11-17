@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.1.0]
+
 * Now requires Java 11
 * Build against OmegaT 6.0.0
 * Bump test dependencies
@@ -24,5 +26,6 @@ All notable changes to this project will be documented in this file.
 * L10N: Port resource bundles
 * Fix: security vulnerability CVE-2019-17570
 
-[Unreleased]: https://github.com/omegat-org/moses-plugin/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/omegat-org/moses-plugin/compare/v1.1.0...HEAD
+[v1.1.0]: https://github.com/omegat-org/moses-plugin/compare/v1.0.1...v1.1.0
 [v1.0.1]: https://github.com/omegat-org/moses-plugin/compare/v1.0.0...v1.0.1
